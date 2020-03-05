@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from 'react'
+import { BrowserRouter, Route} from "react-router-dom"
 import axios from "axios"
 
-import Search from "./components/Search"
-import Results from "./components/Results"
-import Popup from "./components/Popup"
+import Home from "./container/Home"
+import Popup from "./container/Popup"
 
 function App() {
   const [state, setState] = useState({
     s: "batman",
     results: [],
-    selected: {}
   })
 
   useEffect(() => {
     axios(apiurl + "&s=" + state.s)
     .then(({ data }) => {
       let results = data.Search;
-      console.log(results);
       setState(prevState => {
         return {
           ...prevState,
@@ -55,40 +53,23 @@ function App() {
     });
   }
 
-  const openPopup = id => {
-    console.log(id); 
-    axios(apiurl + "&i=" + id)
-    .then(({data}) => {
-      console.log("data", data)
-      let result = data;
-
-      console.log("result", result);
-
-      setState(prevState => {
-        return {...prevState, selected: result }
-      });
-    });
-  }
-
-  const closePopup = () => {
-    setState(prevState => {
-      return {...prevState, selected: {}}
-    })
-  }
-
-  const popupEle = (typeof state.selected.Title != "undefined")  ? (
-    <Popup selected={state.selected} closePopup={closePopup}/>
-  ) : false
-
   return (
     <div className="App">
       <header>
         <h1>Movie Database</h1>
       </header>
       <main>
-          <Search handleInput={handleInput} search={search}/>
-          <Results results={state.results} openPopup={openPopup}/>
-          {popupEle}
+        <BrowserRouter>
+          <Route 
+              exact 
+              path="/" 
+              render={(routeProps) => <Home {...routeProps} 
+                                            handleInput={handleInput} 
+                                            search={search}
+                                            results={state.results} />}
+          />
+          <Route exact path="/films/:id" render={(routeProps) => <Popup {...routeProps} apiurl={apiurl}/>} />
+        </BrowserRouter>
       </main>
     </div>
   );

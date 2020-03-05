@@ -1,15 +1,15 @@
 import React from 'react'
 
-import Result from "./Result"
-
-function Results( { results, openPopup }) {
-    const resultList = results.map(result => {
+function Results(props) {
+    const resultList = props.results.map(result => {
         return (
-            <Result 
-                key={result.imdbID} 
-                result={result} 
-                onClick={() => openPopup(result.imdbID)}
-            />
+            <div key={result.imdbID} 
+                 className="result" 
+                 onClick={() => props.history.push(`/films/${result.imdbID}`)}
+            >
+                <img src={result.Poster} />
+                <h3>{result.Title}</h3>
+            </div>
         )
     })
 
